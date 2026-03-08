@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'"/>
+  <title>Booking System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Syne:wght@600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<!-- ══ LOGIN ═════════════════════════════════════════════════ -->
+<div id="login-screen" class="screen active">
+  <div class="login-bg">
+    <div class="login-orb orb-1"></div>
+    <div class="login-orb orb-2"></div>
+    <div class="login-orb orb-3"></div>
+  </div>
+  <div class="login-card">
+    <div class="login-logo">
+      <span class="logo-icon">⬡</span>
+      <span class="logo-text">BOOKR</span>
+    </div>
+    <p class="login-sub">Sistem Booking Ruangan & Lapangan</p>
+
+    <div id="login-form">
+      <div class="field"><label>Email</label>
+        <input type="email" id="login-email" placeholder="email@domain.com" autocomplete="off"/></div>
+      <div class="field"><label>Password</label>
+        <input type="password" id="login-pass" placeholder="••••••••"/></div>
+      <div id="login-error" class="error-msg hidden"></div>
+      <button class="btn-primary full" id="btn-login">Masuk</button>
+      <button class="btn-ghost full mt-8" id="btn-show-register">Belum punya akun? Daftar</button>
+    </div>
+
+    <div id="register-form" class="hidden">
+      <div class="field"><label>Nama Lengkap</label><input type="text" id="reg-nama" placeholder="John Doe"/></div>
+      <div class="field"><label>Email</label><input type="email" id="reg-email" placeholder="email@domain.com"/></div>
+      <div class="field"><label>Password</label><input type="password" id="reg-pass" placeholder="Min. 6 karakter"/></div>
+      <div class="field"><label>No. Telepon</label><input type="text" id="reg-telp" placeholder="08xxxxxxxxxx"/></div>
+      <div id="reg-error" class="error-msg hidden"></div>
+      <button class="btn-primary full" id="btn-register">Buat Akun</button>
+      <button class="btn-ghost full mt-8" id="btn-show-login">Sudah punya akun? Masuk</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ APP ════════════════════════════════════════════════════ -->
+<div id="app-screen" class="screen">
+
+  <!-- Titlebar -->
+  <div class="titlebar">
+    <div class="titlebar-drag">
+      <span class="logo-icon sm">⬡</span>
+      <span class="titlebar-title">BOOKR</span>
+    </div>
+    <div class="titlebar-controls">
+      <button onclick="window.api.minimize()" class="wc wc-min">─</button>
+      <button onclick="window.api.maximize()" class="wc wc-max">□</button>
+      <button onclick="window.api.close()"    class="wc wc-close">✕</button>
+    </div>
+  </div>
+
+  <!-- Body: sidebar + main -->
+  <div class="app-body">
+
+    <aside class="sidebar">
+      <div class="sidebar-user">
+        <div class="avatar" id="sidebar-avatar">A</div>
+        <div>
+          <div class="user-name" id="sidebar-name">—</div>
+          <div class="user-role" id="sidebar-role">—</div>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <a class="nav-item active" data-page="dashboard"><span class="nav-icon">◈</span> Dashboard</a>
+        <a class="nav-item" data-page="ruangan"><span class="nav-icon">⬜</span> Ruangan</a>
+        <a class="nav-item" data-page="booking"><span class="nav-icon">◷</span> Booking</a>
+        <a class="nav-item admin-only hidden" data-page="pengguna"><span class="nav-icon">◉</span> Pengguna</a>
+      </nav>
+      <button class="btn-logout" id="btn-logout">⏻ Keluar</button>
+    </aside>
+
+    <main class="main-content">
+
+      <!-- DASHBOARD -->
+      <div id="page-dashboard" class="page active">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Dashboard</h1>
+            <p class="page-sub" id="dash-greeting">Selamat datang kembali</p>
+          </div>
+          <div class="date-badge" id="dash-date"></div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card accent-blue">
+            <div class="stat-label">Total Booking</div>
+            <div class="stat-value" id="stat-total">—</div>
+            <div class="stat-icon">◷</div>
+          </div>
+          <div class="stat-card accent-green">
+            <div class="stat-label">Pendapatan</div>
+            <div class="stat-value sm" id="stat-pendapatan">—</div>
+            <div class="stat-icon">◈</div>
+          </div>
+          <div class="stat-card accent-purple">
+            <div class="stat-label">Booking Hari Ini</div>
+            <div class="stat-value" id="stat-hari-ini">—</div>
+            <div class="stat-icon">◉</div>
+          </div>
+          <div class="stat-card accent-orange">
+            <div class="stat-label">Ruangan Aktif</div>
+            <div class="stat-value" id="stat-ruangan">—</div>
+            <div class="stat-icon">⬜</div>
+          </div>
+        </div>
+
+        <div class="dash-bottom">
+          <div class="card calendar-card">
+            <div class="card-header">
+              <span>Kalender Booking</span>
+              <div class="cal-nav">
+                <button id="cal-prev" class="icon-btn">‹</button>
+                <span id="cal-month-label"></span>
+                <button id="cal-next" class="icon-btn">›</button>
+              </div>
+            </div>
+            <div class="calendar-grid" id="calendar-grid"></div>
+          </div>
+
+          <div class="card recent-card">
+            <div class="card-header">Booking Terbaru</div>
+            <div class="recent-list" id="recent-list"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RUANGAN -->
+      <div id="page-ruangan" class="page">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Ruangan & Lapangan</h1>
+            <p class="page-sub">Daftar fasilitas yang tersedia</p>
+          </div>
+          <div class="filter-tabs" id="filter-tabs">
+            <button class="filter-tab active" data-filter="all">Semua</button>
+            <button class="filter-tab" data-filter="rapat">Rapat</button>
+            <button class="filter-tab" data-filter="olahraga">Olahraga</button>
+          </div>
+        </div>
+        <div class="ruangan-grid" id="ruangan-grid"></div>
+      </div>
+
+      <!-- BOOKING -->
+      <div id="page-booking" class="page">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Booking</h1>
+            <p class="page-sub">Reservasi & riwayat</p>
+          </div>
+          <button class="btn-primary" id="btn-new-booking">+ Booking Baru</button>
+        </div>
+        <div class="filter-tabs mb-16">
+          <button class="filter-tab active" data-status="all">Semua</button>
+          <button class="filter-tab" data-status="Dikonfirmasi">Aktif</button>
+          <button class="filter-tab" data-status="Selesai">Selesai</button>
+          <button class="filter-tab" data-status="Dibatalkan">Dibatalkan</button>
+        </div>
+        <div class="booking-table-wrap">
+          <table class="booking-table">
+            <thead><tr>
+              <th>#</th><th>Ruangan</th><th>Tanggal</th><th>Waktu</th>
+              <th>Total</th><th>Status</th><th>Aksi</th>
+            </tr></thead>
+            <tbody id="booking-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- PENGGUNA -->
+      <div id="page-pengguna" class="page admin-only hidden">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Pengguna</h1>
+            <p class="page-sub">Manajemen akun member</p>
+          </div>
+        </div>
+        <div class="booking-table-wrap">
+          <table class="booking-table">
+            <thead><tr><th>#</th><th>Nama</th><th>Email</th><th>Telepon</th><th>Role</th><th>Poin</th><th>Status</th></tr></thead>
+            <tbody id="pengguna-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+  </div><!-- end .app-body -->
+</div><!-- end #app-screen -->
+
+<!-- MODAL BOOKING -->
+<div id="modal-booking" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Booking Baru</h2>
+      <button class="modal-close" data-modal="modal-booking">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="field"><label>Ruangan</label><select id="bk-ruangan"></select></div>
+      <div class="field-row">
+        <div class="field"><label>Tanggal</label><input type="date" id="bk-tanggal"/></div>
+        <div class="field"><label>Jam Mulai</label><select id="bk-jam-mulai"></select></div>
+        <div class="field"><label>Jam Selesai</label><select id="bk-jam-selesai"></select></div>
+      </div>
+      <div class="field"><label>Keterangan</label><input type="text" id="bk-ket" placeholder="Opsional"/></div>
+      <div class="price-preview hidden" id="bk-price-preview">
+        Estimasi: <strong id="bk-price-val">—</strong>
+      </div>
+      <div id="bk-error" class="error-msg hidden"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-ghost" data-modal="modal-booking">Batal</button>
+      <button class="btn-primary" id="btn-submit-booking">Konfirmasi Booking</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast" class="toast hidden"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
